@@ -7,20 +7,6 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const { check, validationResult } = require('express-validator');
 
-// @route  GET api/auth
-// @desc   Test route
-// @access Public (don't need a token)
-router.get('/', auth, async (req, res) => {
-  res.send('Auth route');
-  try {
-    const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
-
 // @route  POST api/auth
 // @desc   Authenticate user and get token
 // @access Public (don't need a token)
@@ -68,6 +54,7 @@ router.post(
         (err, token) => {
           if (err) throw err;
           res.json({ token });
+          //res.header('x-auth-token', token).send(token)
         }
       );
     } catch (err) {
@@ -78,3 +65,17 @@ router.post(
 );
 
 module.exports = router;
+
+// @route  GET api/auth
+// @desc   Test route
+// @access Public (don't need a token)
+router.get('/', auth, async (req, res) => {
+  // res.send('Auth route');
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
